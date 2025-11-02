@@ -3,6 +3,7 @@ package com.codeWithhHemant.blog.controllers;
 import com.codeWithhHemant.blog.paylods.ApiResponse;
 import com.codeWithhHemant.blog.paylods.UserDto;
 import com.codeWithhHemant.blog.services.UserService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.graphql.GraphQlProperties;
 import org.springframework.http.HttpStatus;
@@ -20,7 +21,7 @@ public class UserController {
 
     //add user
     @PostMapping("user")
-    public ResponseEntity<UserDto> addUser(@RequestBody UserDto userDto){
+    public ResponseEntity<UserDto> addUser(@Valid @RequestBody UserDto userDto){
          UserDto savedUserDto = userService.createUser(userDto);
          return new ResponseEntity<>(savedUserDto, HttpStatus.CREATED);
     }
@@ -41,7 +42,7 @@ public class UserController {
 
     //update user
     @PutMapping("user/{userId}")
-    public ResponseEntity<UserDto> updateUser(@RequestBody UserDto userDto,@PathVariable Integer userId){
+    public ResponseEntity<UserDto> updateUser(@Valid @RequestBody UserDto userDto,@PathVariable Integer userId){
        UserDto updatedUserDto = userService.updateUser(userDto,userId);
        return ResponseEntity.ok(updatedUserDto);
     }
