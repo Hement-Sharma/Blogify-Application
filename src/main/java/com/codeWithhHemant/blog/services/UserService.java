@@ -6,9 +6,9 @@ import com.codeWithhHemant.blog.paylods.UserDto;
 import java.util.List;
 
 public interface UserService {
-    public UserDto createUser(UserDto userDto);
-    public UserDto updateUser(UserDto userDto,Integer id);
-    public List<UserDto> getAllUsers();
-    public UserDto getUserById(Integer id);
-    public void delteUser(Integer id);
+     UserDto createUser(UserDto userDto);
+     UserDto updateUser(UserDto userDto,Integer id);
+     List<UserDto> getAllUsers();
+     UserDto getUserById(Integer id);
+     void delteUser(Integer id);
 }

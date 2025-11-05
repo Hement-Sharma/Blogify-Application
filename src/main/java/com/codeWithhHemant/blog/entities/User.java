@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Entity
 @Table(name="users")
 @Data
@@ -27,4 +29,6 @@ public class User {
     @Column(name="about_user",nullable=false,length = 200)
     private String about;
 
+    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+    List<Post> posts;
 }
