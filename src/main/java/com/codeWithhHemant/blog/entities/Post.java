@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "posts")
@@ -37,4 +38,7 @@ public class Post {
     @ManyToOne
     @JoinColumn(name = "user_id",nullable = false)
     private User user;
+
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+    private List<Comment> comments;
 }

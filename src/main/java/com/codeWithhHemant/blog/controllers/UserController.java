@@ -2,6 +2,7 @@ package com.codeWithhHemant.blog.controllers;
 
 import com.codeWithhHemant.blog.paylods.ApiResponse;
 import com.codeWithhHemant.blog.paylods.UserDto;
+import com.codeWithhHemant.blog.paylods.UserResponse;
 import com.codeWithhHemant.blog.services.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,9 +29,14 @@ public class UserController {
 
     //get all users
     @GetMapping("users")
-    public ResponseEntity<List<UserDto>> getAllUsers(){
-       List<UserDto> userDtos = userService.getAllUsers();
-       return ResponseEntity.ok(userDtos);
+    public ResponseEntity<UserResponse> getAllUsers(
+            @RequestParam(value = "pageNo",defaultValue = "0",required = false) Integer pageNumber,
+            @RequestParam(value = "pageSize",defaultValue = "5",required = false) Integer pageSize,
+            @RequestParam(value = "sortBy",defaultValue = "id",required = false) String sortBy,
+            @RequestParam(value = "sortDir",defaultValue = "asc",required = false) String sortDirection)
+    {
+       UserResponse userResponse = userService.getAllUsers(pageNumber,pageSize,sortBy,sortDirection);
+       return ResponseEntity.ok(userResponse);
     }
 
     //get user by id

@@ -31,4 +31,7 @@ public class User {
 
     @OneToMany(mappedBy = "user",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
     List<Post> posts;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+    private List<Comment> comments;
 }

@@ -2,6 +2,7 @@ package com.codeWithhHemant.blog.services;
 
 import com.codeWithhHemant.blog.paylods.CategoryDto;
 import com.codeWithhHemant.blog.paylods.PostDto;
+import com.codeWithhHemant.blog.paylods.PostResponse;
 
 import java.util.List;
 
@@ -11,7 +12,7 @@ public interface PostService {
     PostDto createPost(PostDto postDto,Integer categoryId,Integer userId);
 
     //get all posts
-    List<PostDto> getAllPosts();
+    PostResponse getAllPosts(Integer pageNumber, Integer pageSize,String sortBy,String sortDir);
 
     //get single post
     PostDto getPostById(Integer postId);
@@ -23,8 +24,10 @@ public interface PostService {
     void deletePost(Integer postId);
 
     //get Posts based on user
-    List<PostDto> getPostsByUser(Integer userId);
+    PostResponse getPostsByUser(Integer userId,Integer pageNumber,Integer pageSize,String sortBy,String sortDir);
 
     //get Posts Based On Category
-    List<PostDto> getPostsByCategory(Integer categoryId);
+    PostResponse getPostsByCategory(Integer categoryId,Integer pageNumber,Integer pageSize,String sortBy,String sortDir);
+
+ PostResponse getPostsByKeyword(String keyword,Integer pageNumber, Integer pageSize, String sortBy, String sortDir);
 }

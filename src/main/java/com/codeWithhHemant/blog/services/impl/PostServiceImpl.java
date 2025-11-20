@@ -5,12 +5,18 @@ import com.codeWithhHemant.blog.entities.Post;
 import com.codeWithhHemant.blog.entities.User;
 import com.codeWithhHemant.blog.exceptions.ResourceNotFoundException;
 import com.codeWithhHemant.blog.paylods.PostDto;
+import com.codeWithhHemant.blog.paylods.PostResponse;
 import com.codeWithhHemant.blog.repositories.CategoryRepo;
 import com.codeWithhHemant.blog.repositories.PostRepo;
 import com.codeWithhHemant.blog.repositories.UserRepo;
 import com.codeWithhHemant.blog.services.PostService;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.text.CollationElementIterator;
@@ -51,10 +57,31 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<PostDto> getAllPosts() {
-        List<Post> posts = postRepo.findAll();
+    public PostResponse getAllPosts(Integer pageNumber,Integer pageSize,String sortBy,String sortDir) {
+
+        Sort sort;
+
+        if(sortDir.equalsIgnoreCase("desc")){ //id descending
+            sort = Sort.by(sortBy).descending();
+        }else{
+            sort = Sort.by(sortBy);  //by default ascending.
+        }
+
+        Pageable pageable = PageRequest.of(pageNumber,pageSize,sort);
+
+        Page<Post> pagePosts = postRepo.findAll(pageable);
+        List<Post> posts = pagePosts.toList();
         List<PostDto> postDtos = posts.stream().map(post -> mapper.map(post,PostDto.class)).collect(Collectors.toList());
-        return postDtos;
+
+        PostResponse postResponse = new PostResponse();
+        postResponse.setPosts(postDtos);
+        postResponse.setPageNumber(pagePosts.getNumber());
+        postResponse.setPageSize(pagePosts.getSize());
+        postResponse.setTotalPages(pagePosts.getTotalPages());
+        postResponse.setTotalElements(pagePosts.getTotalElements());
+        postResponse.setLastPage(pagePosts.isLast());
+
+        return postResponse;
     }
 
     @Override
@@ -84,22 +111,86 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<PostDto> getPostsByUser(Integer userId) {
+    public PostResponse getPostsByUser(Integer userId,Integer pageNumber,Integer pageSize,String sortBy,String sortDir) {
         User user = userRepo.findById(userId)
                 .orElseThrow(()->new ResourceNotFoundException("USER ","ID",userId));
 
-        List<Post> posts = postRepo.findByUser(user);
+        Sort sort;
+
+        if(sortDir.equalsIgnoreCase("desc")){ //id descending
+            sort = Sort.by(sortBy).descending();
+        }else{
+            sort = Sort.by(sortBy);  //by default ascending.
+        }
+
+        Pageable pageable = PageRequest.of(pageNumber,pageSize,sort);
+        Page<Post> pagePosts = postRepo.findByUser(user,pageable);
+        List<Post> posts = pagePosts.toList();
         List<PostDto> postDtos = posts.stream().map(post -> mapper.map(post,PostDto.class)).collect(Collectors.toList());
-        return postDtos;
+
+        PostResponse postResponse = new PostResponse();
+        postResponse.setPosts(postDtos);
+        postResponse.setPageNumber(pagePosts.getNumber());
+        postResponse.setPageSize(pagePosts.getSize());
+        postResponse.setTotalPages(pagePosts.getTotalPages());
+        postResponse.setTotalElements(pagePosts.getTotalElements());
+        postResponse.setLastPage(pagePosts.isLast());
+
+        return postResponse;
     }
 
     @Override
-    public List<PostDto> getPostsByCategory(Integer categoryId) {
+    public PostResponse getPostsByCategory(Integer categoryId,Integer pageNumber,Integer pageSize,String sortBy,String sortDir) {
         Category category = catRepo.findById(categoryId)
                 .orElseThrow(()->new ResourceNotFoundException("CATEGORY ","ID",categoryId));
 
-        List<Post> posts = postRepo.findByCategory(category);
+        Sort sort;
+
+        if(sortDir.equalsIgnoreCase("desc")){ //id descending
+            sort = Sort.by(sortBy).descending();
+        }else{
+            sort = Sort.by(sortBy);  //by default ascending.
+        }
+
+        Pageable pageable = PageRequest.of(pageNumber,pageSize,sort);
+        Page<Post> pagePosts = postRepo.findByCategory(category,pageable);
+        List<Post> posts = pagePosts.toList();
         List<PostDto> postDtos = posts.stream().map(post -> mapper.map(post,PostDto.class)).collect(Collectors.toList());
-        return postDtos;
+
+        PostResponse postResponse = new PostResponse();
+        postResponse.setPosts(postDtos);
+        postResponse.setPageNumber(pagePosts.getNumber());
+        postResponse.setPageSize(pagePosts.getSize());
+        postResponse.setTotalPages(pagePosts.getTotalPages());
+        postResponse.setTotalElements(pagePosts.getTotalElements());
+        postResponse.setLastPage(pagePosts.isLast());
+
+        return postResponse;
+    }
+
+   public PostResponse getPostsByKeyword(String keyword,Integer pageNumber, Integer pageSize, String sortBy, String sortDir){
+
+        Sort sort;
+
+        if(sortDir.equalsIgnoreCase("desc")){ //id descending
+            sort = Sort.by(sortBy).descending();
+        }else{
+            sort = Sort.by(sortBy);  //by default ascending.
+        }
+
+        Pageable pageable = PageRequest.of(pageNumber,pageSize,sort);
+        Page<Post> pagePosts = postRepo.findByTitleContaining(keyword,pageable);
+        List<Post> posts = pagePosts.toList();
+        List<PostDto> postDtos = posts.stream().map(post -> mapper.map(post,PostDto.class)).collect(Collectors.toList());
+
+        PostResponse postResponse = new PostResponse();
+        postResponse.setPosts(postDtos);
+        postResponse.setPageNumber(pagePosts.getNumber());
+        postResponse.setPageSize(pagePosts.getSize());
+        postResponse.setTotalPages(pagePosts.getTotalPages());
+        postResponse.setTotalElements(pagePosts.getTotalElements());
+        postResponse.setLastPage(pagePosts.isLast());
+
+        return postResponse;
     }
 }

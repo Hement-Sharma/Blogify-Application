@@ -2,6 +2,7 @@ package com.codeWithhHemant.blog.controllers;
 
 import com.codeWithhHemant.blog.paylods.ApiResponse;
 import com.codeWithhHemant.blog.paylods.CategoryDto;
+import com.codeWithhHemant.blog.paylods.CategoryResponse;
 import com.codeWithhHemant.blog.services.CategoryService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,9 +27,14 @@ public class CategoryController{
     }
 
     @GetMapping("categories")
-    public ResponseEntity<List<CategoryDto>> getAllCategories(){
-        List<CategoryDto> categoryDtos = this.service.getAllCategories();
-        return ResponseEntity.ok(categoryDtos);
+    public ResponseEntity<CategoryResponse> getAllCategories(
+            @RequestParam(value = "pageNo",defaultValue = "0",required = false) Integer pageNumber,
+            @RequestParam(value = "pageSize",defaultValue = "5",required = false) Integer pageSize,
+            @RequestParam(value = "sortBy",defaultValue = "categoryId",required = false) String sortBy,
+            @RequestParam(value = "sortDir",defaultValue = "asc",required = false) String sortDirection)
+    {
+        CategoryResponse categoryResponse = this.service.getAllCategories(pageNumber,pageSize,sortBy,sortDirection);
+        return ResponseEntity.ok(categoryResponse);
     }
 
     @GetMapping("category/{catId}")

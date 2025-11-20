@@ -1,12 +1,20 @@
 package com.codeWithhHemant.blog.services.impl;
 
+import com.codeWithhHemant.blog.entities.Post;
 import com.codeWithhHemant.blog.entities.User;
 import com.codeWithhHemant.blog.exceptions.ResourceNotFoundException;
+import com.codeWithhHemant.blog.paylods.PostDto;
+import com.codeWithhHemant.blog.paylods.PostResponse;
 import com.codeWithhHemant.blog.paylods.UserDto;
+import com.codeWithhHemant.blog.paylods.UserResponse;
 import com.codeWithhHemant.blog.repositories.UserRepo;
 import com.codeWithhHemant.blog.services.UserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -44,10 +52,30 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserDto> getAllUsers() {
-        List<User> users = userRepo.findAll();
-        List<UserDto> userDtos = users.stream().map(user->this.userToUserDto(user)).collect(Collectors.toList());
-        return userDtos;
+    public UserResponse getAllUsers(Integer pageNumber, Integer pageSize, String sortBy, String sortDir) {
+        Sort sort;
+
+        if(sortDir.equalsIgnoreCase("desc")){ //descending
+            sort = Sort.by(sortBy).descending();
+        }else{
+            sort = Sort.by(sortBy);  //by default ascending.
+        }
+
+        Pageable pageable = PageRequest.of(pageNumber,pageSize,sort);
+
+        Page<User> pageUsers = userRepo.findAll(pageable);
+        List<User> users = pageUsers.toList();
+        List<UserDto> userDtos = users.stream().map(user -> modelMapper.map(user,UserDto.class)).collect(Collectors.toList());
+
+        UserResponse userResponse = new UserResponse();
+        userResponse.setUsers(userDtos);
+        userResponse.setPageNumber(pageUsers.getNumber());
+        userResponse.setPageSize(pageUsers.getSize());
+        userResponse.setTotalPages(pageUsers.getTotalPages());
+        userResponse.setTotalElements(pageUsers.getTotalElements());
+        userResponse.setLastPage(pageUsers.isLast());
+
+        return userResponse;
     }
 
     @Override

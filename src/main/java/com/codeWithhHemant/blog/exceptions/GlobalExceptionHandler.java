@@ -8,6 +8,9 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -31,6 +34,18 @@ public class GlobalExceptionHandler{
         });
 
         return new ResponseEntity<>(resp,HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(IOException.class)
+    public ResponseEntity<ApiResponse> handleIOException(IOException ex) {
+        ApiResponse response = new ApiResponse("File operation failed on server: " + ex.getMessage(), false);
+        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(FileNotFoundException.class)
+    public ResponseEntity<ApiResponse> handleFileNotFoundException(FileNotFoundException ex){
+        ApiResponse response = new ApiResponse(ex.getMessage(),false);
+        return new ResponseEntity<>(response,HttpStatus.NOT_FOUND);
     }
 
 }
