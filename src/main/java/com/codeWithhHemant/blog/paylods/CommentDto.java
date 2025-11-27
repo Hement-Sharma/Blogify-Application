@@ -1,8 +1,5 @@
 package com.codeWithhHemant.blog.paylods;
 
-import jakarta.persistence.Basic;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
@@ -20,7 +17,7 @@ public class CommentDto{
     @Size(max=250,message = "the size of comment content must be 250 or less...")
     private String content;
 
-    private UserDto user;
+    private UserCreateDto user;
     private PostDto post;
 }
 

@@ -3,6 +3,7 @@ package com.codeWithhHemant.blog.exceptions;
 import com.codeWithhHemant.blog.paylods.ApiResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -28,7 +29,7 @@ public class GlobalExceptionHandler{
         Map<String,String> resp = new HashMap<>();
 
         e.getBindingResult().getAllErrors().forEach( error->{
-           String fieldName = ((FieldError)error).getField(); //typecastin error to FieldError
+           String fieldName = ((FieldError)error).getField(); //typecasting error to FieldError
             String errorMessage = error.getDefaultMessage();
             resp.put(fieldName,errorMessage);
         });
@@ -46,6 +47,12 @@ public class GlobalExceptionHandler{
     public ResponseEntity<ApiResponse> handleFileNotFoundException(FileNotFoundException ex){
         ApiResponse response = new ApiResponse(ex.getMessage(),false);
         return new ResponseEntity<>(response,HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<ApiResponse> handleBadCreadentialsException(BadCredentialsException ex){
+        ApiResponse response = new ApiResponse("Invalid UserName Or Password !!!",false);
+        return new ResponseEntity<>(response,HttpStatus.UNAUTHORIZED);
     }
 
 }

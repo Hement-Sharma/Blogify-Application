@@ -23,7 +23,7 @@ public class User {
     @Column(name="user_email",nullable=false,length = 30)
     private String email;
 
-    @Column(name="user_password",nullable=false,length = 30)
+    @Column(name="user_password",nullable=false,length = 150)
     private String password;
 
     @Column(name="about_user",nullable=false,length = 200)
@@ -34,4 +34,9 @@ public class User {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL,fetch = FetchType.LAZY)
     private List<Comment> comments;
+
+    @ManyToMany(cascade = CascadeType.PERSIST,fetch = FetchType.EAGER)
+    @JoinTable(name = "user_role",joinColumns = @JoinColumn(name="uId",referencedColumnName = "user_id"),
+                                  inverseJoinColumns = @JoinColumn(name="role_id",referencedColumnName = "id"))
+    private List<Role> roles;
 }

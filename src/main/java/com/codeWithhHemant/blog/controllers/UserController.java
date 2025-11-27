@@ -1,17 +1,13 @@
 package com.codeWithhHemant.blog.controllers;
 
-import com.codeWithhHemant.blog.paylods.ApiResponse;
-import com.codeWithhHemant.blog.paylods.UserDto;
-import com.codeWithhHemant.blog.paylods.UserResponse;
+import com.codeWithhHemant.blog.paylods.*;
 import com.codeWithhHemant.blog.services.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.graphql.GraphQlProperties;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("api")
@@ -20,11 +16,11 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    //add user
-    @PostMapping("user")
-    public ResponseEntity<UserDto> addUser(@Valid @RequestBody UserDto userDto){
-         UserDto savedUserDto = userService.createUser(userDto);
-         return new ResponseEntity<>(savedUserDto, HttpStatus.CREATED);
+    //register/add user
+    @PostMapping("register")
+    public ResponseEntity<UserResponseDto> registerUser(@Valid @RequestBody UserCreateDto userCreateDto){
+         UserResponseDto savedUserResponseDto = userService.createUser(userCreateDto);
+         return new ResponseEntity<>(savedUserResponseDto, HttpStatus.CREATED);
     }
 
     //get all users
@@ -41,19 +37,20 @@ public class UserController {
 
     //get user by id
     @GetMapping("user/{userId}")
-    public ResponseEntity<UserDto> getUserById(@PathVariable Integer userId){
-       UserDto userDto = userService.getUserById(userId);
-       return new ResponseEntity<>(userDto, HttpStatus.OK);
+    public ResponseEntity<UserResponseDto> getUserById(@PathVariable Integer userId){
+       UserResponseDto userResponseDto = userService.getUserById(userId);
+       return new ResponseEntity<>(userResponseDto, HttpStatus.OK);
     }
 
     //update user
     @PutMapping("user/{userId}")
-    public ResponseEntity<UserDto> updateUser(@Valid @RequestBody UserDto userDto,@PathVariable Integer userId){
-       UserDto updatedUserDto = userService.updateUser(userDto,userId);
-       return ResponseEntity.ok(updatedUserDto);
+    public ResponseEntity<UserResponseDto> updateUser(@Valid @RequestBody UserUpdateDto userUpdateDto, @PathVariable Integer userId){
+       UserResponseDto updatedUserResponseDto = userService.updateUser(userUpdateDto,userId);
+       return ResponseEntity.ok(updatedUserResponseDto);
     }
 
     //delete user
+    @PreAuthorize("hasRole('ADMIN')")  //only admin can access this
     @DeleteMapping("user/{userId}")
     public ResponseEntity<ApiResponse> deleteUser(@PathVariable Integer userId){
         userService.delteUser(userId);

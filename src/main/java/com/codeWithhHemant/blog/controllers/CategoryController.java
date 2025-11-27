@@ -8,6 +8,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.http.HttpResponse;
@@ -21,12 +22,14 @@ public class CategoryController{
     CategoryService service;
 
     @PostMapping("category")
+    @PreAuthorize("hasRole('ADMIN')")  //only admin can access this
     public ResponseEntity<CategoryDto> createCategory(@Valid @RequestBody CategoryDto categoryDto){
         CategoryDto createdCategoryDto = this.service.createCategory(categoryDto);
         return new ResponseEntity<>(createdCategoryDto, HttpStatus.CREATED);
     }
 
     @GetMapping("categories")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<CategoryResponse> getAllCategories(
             @RequestParam(value = "pageNo",defaultValue = "0",required = false) Integer pageNumber,
             @RequestParam(value = "pageSize",defaultValue = "5",required = false) Integer pageSize,
@@ -38,18 +41,21 @@ public class CategoryController{
     }
 
     @GetMapping("category/{catId}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<CategoryDto> getSingleCategory(@PathVariable Integer catId){
         CategoryDto categoryDto = this.service.getCategoryById(catId);
         return ResponseEntity.ok(categoryDto);
     }
 
     @PutMapping("category/{catId}")
+    @PreAuthorize("hasRole('ADMIN')")
      public ResponseEntity<CategoryDto> updateCategory(@Valid @RequestBody CategoryDto categoryDto ,@PathVariable Integer catId){
        CategoryDto updatedCategoryDto = this.service.updateCategory(catId,categoryDto);
        return new ResponseEntity<>(updatedCategoryDto,HttpStatus.OK);
     }
 
     @DeleteMapping("category/{catId}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse> deleteCategory(@PathVariable Integer catId){
        this.service.deleteCategory(catId);
        return new ResponseEntity<>(new ApiResponse("Category Deleted Successfully",true),HttpStatus.OK);
